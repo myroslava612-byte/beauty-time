@@ -201,10 +201,53 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--accent-ink); }
 
 /* Послуги */
 .svc { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.svc li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding-block: 24px; border-bottom: 1px solid var(--line); align-items: start; justify-items: start; }
+.svc li {
+  --rx: 0deg; --ry: 0deg; --lift: 0px; --mx: 50%; --my: 0%;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  padding-block: 24px;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+  justify-items: start;
+  transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift));
+  transition: transform .25s ease-out, border-color .3s;
+}
+.svc li > * { position: relative; }
+/* Підсвітка рядка при наведенні: виходить за межі колонок на 14px, тож текст не зсувається, а лінії лишаються рівними */
+.svc li::before {
+  content: "";
+  position: absolute;
+  inset: 0 -14px;
+  border-radius: 16px;
+  background: radial-gradient(320px circle at var(--mx) var(--my), rgba(176, 139, 98, .22), rgba(176, 139, 98, 0) 62%), rgba(249, 245, 238, .85);
+  opacity: 0;
+  transition: opacity .35s;
+  pointer-events: none;
+}
+.svc li::after {
+  content: "";
+  position: absolute;
+  inset: 0 -14px;
+  border-radius: 16px;
+  border: 1px solid rgba(176, 139, 98, .55);
+  box-shadow: 0 24px 44px -22px rgba(127, 96, 64, .45);
+  opacity: 0;
+  transition: opacity .35s;
+  pointer-events: none;
+}
 .svc h3 { font-size: clamp(1.7rem, 3vw, 2.4rem); font-style: italic; font-weight: 300; line-height: 1.05; }
 .svc p { color: var(--soft); font-size: .96rem; }
-.svc .dur { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); white-space: nowrap; font-weight: 500; }
+.svc .dur { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); white-space: nowrap; font-weight: 500; transform-origin: left center; }
+.svc h3 { transition: color .3s; }
+@media (hover: hover) and (pointer: fine) {
+  .svc li:hover { --lift: -4px; border-bottom-color: transparent; will-change: transform; }
+  .svc li:hover::before, .svc li:hover::after { opacity: 1; }
+  .svc li:hover h3 { color: var(--accent-ink); }
+  .svc li:hover .dur { animation: twinkle .7s ease-in-out 1 both; }
+  .svc li:hover .btn { background: var(--ink); color: var(--bg); }
+}
 
 /* Як ми працюємо */
 .princ { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px var(--gap); align-items: start; }
@@ -248,10 +291,59 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--accent-ink); }
 .story .res { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); font-size: .85rem; color: var(--ink); }
 
 /* Відгуки */
-.reviews { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px var(--gap); align-items: start; }
-.review { margin: 0; border-top: 1px solid var(--ink); padding-top: 22px; display: grid; gap: 18px; align-content: start; }
+.reviews { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); align-items: stretch; }
+.review {
+  --rx: 0deg; --ry: 0deg; --lift: 0px; --mx: 50%; --my: 0%;
+  position: relative;
+  margin: 0;
+  padding: 24px 22px 26px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 18px;
+  background: rgba(249, 245, 238, .72);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift));
+  transition: transform .25s ease-out, border-color .3s;
+}
+.review > * { position: relative; }
+/* Сяйво за курсором і тінь: анімуємо лише opacity, це дешево для браузера */
+.review::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(240px circle at var(--mx) var(--my), rgba(176, 139, 98, .22), rgba(176, 139, 98, 0) 62%);
+  opacity: 0;
+  transition: opacity .35s;
+  pointer-events: none;
+}
+.review::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 24px 44px -22px rgba(127, 96, 64, .45);
+  opacity: 0;
+  transition: opacity .35s;
+  pointer-events: none;
+}
 .stars { color: var(--accent-ink); letter-spacing: .2em; font-size: .9rem; }
+.stars i { display: inline-block; font-style: normal; }
 .review blockquote { margin: 0; font-family: var(--font-display); font-size: 1.4rem; line-height: 1.28; font-weight: 400; }
+
+/* Поява при скролі: картки виходять по черзі. Клас rev-ready додає скрипт, тож без нього все видно */
+@keyframes rev-up { from { opacity: 0; transform: translateY(28px) scale(.96); } }
+@keyframes twinkle { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.4); color: var(--accent); } }
+.rev-ready .rv { opacity: 0; }
+.rev-ready .rv.in { opacity: 1; animation: rev-up .7s cubic-bezier(.2, .8, .2, 1) var(--d, 0ms) backwards; }
+
+/* Наведення: тільки для миші. На телефонах нахилу немає */
+@media (hover: hover) and (pointer: fine) {
+  .review:hover { --lift: -6px; border-color: var(--accent); will-change: transform; }
+  .review:hover::before, .review:hover::after { opacity: 1; }
+  .review:hover .stars i { animation: twinkle .7s ease-in-out var(--i, 0ms) 1 both; }
+}
 .review figcaption { font-size: .84rem; color: var(--soft); }
 .review figcaption b { display: block; color: var(--ink); font-weight: 500; letter-spacing: .04em; }
 
@@ -393,7 +485,7 @@ form { display: grid; gap: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  * { transition: none !important; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 </style>
 
@@ -895,7 +987,7 @@ form { display: grid; gap: 18px; }
   if (reduce || !("IntersectionObserver" in window)) return;
 
   /* Картки в блоках «Послуги» і «Як ми працюємо»: поява за 0,2 с */
-  var cards = document.querySelectorAll(".svc li, .princ article");
+  var cards = document.querySelectorAll(".princ article");
   Array.prototype.forEach.call(cards, function (el) {
     var idx = Array.prototype.indexOf.call(el.parentNode.children, el);
     el.style.setProperty("--d", (idx * 70) + "ms");
@@ -908,6 +1000,61 @@ form { display: grid; gap: 18px; }
     });
   }, { threshold: 0.15, rootMargin: "0px 0px -6% 0px" });
   Array.prototype.forEach.call(cards, function (el) { cardIO.observe(el); });
+
+  /* Відгуки: зірочки окремими елементами, щоб спалахували по черзі */
+  var revs = document.querySelectorAll(".review, .svc li");
+  Array.prototype.forEach.call(document.querySelectorAll(".review .stars"), function (s) {
+    var n = (s.textContent || "").trim().length;
+    s.textContent = "";
+    for (var k = 0; k < n; k++) {
+      var star = document.createElement("i");
+      star.textContent = "★";
+      star.setAttribute("aria-hidden", "true");
+      star.style.setProperty("--i", (k * 80) + "ms");
+      s.appendChild(star);
+    }
+  });
+
+  /* Відгуки: поява по черзі при скролі, затримка залежить від колонки */
+  Array.prototype.forEach.call(revs, function (el) {
+    var idx = Array.prototype.indexOf.call(el.parentNode.children, el);
+    var isRow = el.tagName === "LI";
+    el.style.setProperty("--d", (isRow ? Math.min(idx, 5) * 70 : (idx % 4) * 90) + "ms");
+    el.classList.add("rv");
+  });
+  document.documentElement.classList.add("rev-ready");
+  var revIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add("in"); revIO.unobserve(en.target); }
+    });
+  }, { threshold: 0.2, rootMargin: "0px 0px -8% 0px" });
+  Array.prototype.forEach.call(revs, function (el) { revIO.observe(el); });
+
+  /* Відгуки: м'який 3D-нахил за курсором, тільки для миші. Оновлюємо один раз за кадр */
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    Array.prototype.forEach.call(revs, function (card) {
+      var rect = null, raf = 0, ev = null;
+      var big = card.classList.contains("review");
+      var ky = big ? 10 : 2.4, kx = big ? 8 : 1.6;
+      function frame() {
+        raf = 0;
+        if (!rect || !ev) return;
+        var x = (ev.clientX - rect.left) / rect.width;
+        var y = (ev.clientY - rect.top) / rect.height;
+        card.style.setProperty("--ry", ((x - 0.5) * ky).toFixed(2) + "deg");
+        card.style.setProperty("--rx", ((0.5 - y) * kx).toFixed(2) + "deg");
+        card.style.setProperty("--mx", (x * 100).toFixed(1) + "%");
+        card.style.setProperty("--my", (y * 100).toFixed(1) + "%");
+      }
+      card.addEventListener("pointerenter", function () { rect = card.getBoundingClientRect(); });
+      card.addEventListener("pointermove", function (e) { ev = e; if (!raf) raf = requestAnimationFrame(frame); });
+      card.addEventListener("pointerleave", function () {
+        ev = null;
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+      });
+    });
+  }
 
   /* Цифри на плашках: відлік від 0 до потрібного значення */
   var nums = document.querySelectorAll(".num");
