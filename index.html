@@ -7,9 +7,9 @@
 <title>Beauty Time</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Onest:wght@300;400;500&display=swap">
 <style>
-/* Layout: 12-колонкова сітка. Номер секції в 1-й колонці, мітка й заголовок із 4-ї лінії,
-   текст завжди зліва направо й зверху вниз. Фото й картки лягають на повну ширину по тих самих лініях.
-   Вкладені сітки з рівними колонками й тим самим проміжком збігаються з 12 колонками. */
+/* Layout: один суцільний сайт на 12-колонковій сітці. Секції йдуть одна за одною без проміжків між ними.
+   Відступи тільки всередині секцій. Тло майже скрізь одне, а де потрібен акцент, воно плавно переходить у темніший беж.
+   Номер секції в 1-й колонці, мітка й заголовок із 4-ї лінії, текст завжди зліва направо. */
 :root {
   --bg: #f3ede3;
   --bg-2: #ebe2d3;
@@ -22,12 +22,13 @@
   --font-display: "Cormorant", "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --font-body: "Onest", "Helvetica Neue", Arial, sans-serif;
   --radius: 20px;
+  --gutter: clamp(16px, 4vw, 56px);
   --gap: clamp(12px, 2vw, 24px);
-  --section: clamp(72px, 10vw, 128px);
+  --section: clamp(56px, 7vw, 96px);
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
 body {
   margin: 0;
   background: var(--bg);
@@ -48,22 +49,45 @@ body::before {
 a { color: inherit; }
 img { max-width: 100%; }
 p { margin: 0; }
+main, main > section { margin: 0; }
 .wrap {
-  max-width: 1240px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
 }
 .g12 { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gap); }
 
-/* Шапка */
+/* Інфо-смуга й шапка */
+.util { display: none; background: var(--bg-2); font-size: .78rem; color: var(--soft); }
+.util .row { display: flex; flex-wrap: wrap; gap: 4px 32px; padding-block: 9px; }
+.util a { text-decoration: none; }
+.util a:hover { color: var(--ink); }
+
 .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
-.top .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.top .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 14px; }
+.top .actions { display: flex; align-items: center; gap: 10px; }
 .logo { font-family: var(--font-display); font-size: 1.75rem; font-weight: 500; letter-spacing: .02em; text-decoration: none; line-height: 1; }
 .logo em { font-weight: 400; color: var(--accent-ink); }
-.nav { display: none; gap: 28px; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; }
-.nav a { text-decoration: none; color: var(--soft); transition: color .2s; white-space: nowrap; }
+.nav {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  flex-direction: column;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  padding: 4px max(var(--gutter), env(safe-area-inset-right, 0px)) 18px max(var(--gutter), env(safe-area-inset-left, 0px));
+  font-size: .86rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.top.open .nav { display: flex; }
+.nav a { text-decoration: none; color: var(--soft); padding: 14px 0; border-top: 1px solid var(--line); transition: color .2s; white-space: nowrap; }
+.nav a:first-child { border-top: 0; }
 .nav a:hover, .nav a:focus-visible { color: var(--ink); }
+.menu-btn { background: none; color: var(--ink); border: 1px solid var(--ink); border-radius: 999px; padding: 11px 16px; font: 500 .74rem/1 var(--font-body); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
 
 .btn {
   display: inline-block;
@@ -82,21 +106,24 @@ p { margin: 0; }
 .btn:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
 .btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
 .btn.ghost:hover { background: var(--ink); color: var(--bg); }
-a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .btn:focus-visible, .ba input:focus-visible + .ba-handle {
+.btn.sm { padding: 10px 20px; font-size: .72rem; white-space: nowrap; }
+a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, .btn:focus-visible, .ba input:focus-visible + .ba-handle {
   outline: 2px solid var(--accent-ink);
   outline-offset: 3px;
 }
 
-/* Секції й заголовок секції */
+/* Секції: відступи тільки всередині, між сусідніми простими секціями без подвоєння */
 .sec { padding-block: var(--section); }
-.sec.tone { background: var(--bg-2); }
+.sec:not(.tone) + .sec:not(.tone) { padding-top: 0; }
+.sec + .sec.tone, .sec.tone + .sec { padding-top: calc(var(--section) * .7); }
+.sec.tone { background: linear-gradient(180deg, var(--bg) 0, var(--bg-2) 96px, var(--bg-2) calc(100% - 96px), var(--bg) 100%); }
+.sec.tone.end { background: linear-gradient(180deg, var(--bg) 0, var(--bg-2) 96px, var(--bg-2) 100%); padding-bottom: calc(var(--section) * .8); }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 400; margin: 0; text-wrap: balance; }
 h2 { font-size: clamp(2.3rem, 4.8vw, 4rem); line-height: 1.06; letter-spacing: -.005em; }
 h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--accent-ink); }
 .label { font-size: .74rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-ink); font-weight: 500; margin: 0; }
 
-.shead { margin-bottom: clamp(40px, 6vw, 72px); row-gap: 20px; align-items: baseline; }
-.shead { grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; }
+.shead { margin-bottom: clamp(32px, 4.5vw, 56px); row-gap: 18px; align-items: baseline; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; }
 .shead .idx { font-size: .74rem; letter-spacing: .14em; color: var(--soft); font-variant-numeric: tabular-nums; font-weight: 500; }
 .shead .label::before { content: "[ "; }
 .shead .label::after { content: " ]"; }
@@ -131,28 +158,40 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--accent-ink); }
 .ph img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .arch { border-radius: 999px 999px var(--radius) var(--radius); }
 
-/* Головний екран */
-.hero { position: relative; min-height: clamp(540px, 62vw, 760px); display: flex; align-items: flex-end; overflow: hidden; background: var(--bg-2); }
+/* Головний екран і цифри на напівпрозорих плашках */
+.hero { position: relative; min-height: clamp(620px, 70vw, 820px); display: flex; align-items: flex-end; overflow: hidden; background: var(--bg-2); }
 .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(243,237,227,.96) 0%, rgba(243,237,227,.82) 55%, rgba(243,237,227,.3) 100%); }
-.hero .wrap { position: relative; z-index: 2; width: 100%; padding-block: clamp(40px, 7vw, 96px); }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(243,237,227,.94) 0%, rgba(243,237,227,.8) 55%, rgba(243,237,227,.3) 100%); }
+.hero .wrap { position: relative; z-index: 2; width: 100%; padding-block: clamp(36px, 6vw, 80px); display: grid; gap: clamp(28px, 4vw, 52px); }
 .hero-copy { max-width: 600px; display: grid; gap: 22px; justify-items: start; }
 .hero h1 { font-size: clamp(2.9rem, 7vw, 6rem); line-height: 1.01; letter-spacing: -.01em; }
 .hero p.sub { color: var(--soft); max-width: 44ch; font-size: 1.05rem; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
-.hero-facts { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-top: 18px; font-size: .82rem; color: var(--soft); }
+.hero-facts { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-top: 12px; font-size: .82rem; color: var(--soft); }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); }
+.stat {
+  background: rgba(249, 245, 238, .78);
+  border: 1px solid rgba(255, 255, 255, .65);
+  border-radius: 16px;
+  padding: 18px 22px 20px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .stat { background: rgba(249, 245, 238, .6); -webkit-backdrop-filter: blur(14px) saturate(1.1); backdrop-filter: blur(14px) saturate(1.1); }
+}
+.stat b { display: flex; align-items: baseline; gap: .15em; font-family: var(--font-display); font-weight: 300; font-size: clamp(2.3rem, 4.4vw, 3.6rem); line-height: 1; font-variant-numeric: tabular-nums lining-nums; }
+.stat b i { font-size: .45em; font-weight: 300; color: var(--accent-ink); }
+.stat > span { font-size: .84rem; color: var(--ink); line-height: 1.35; }
 
 /* Про салон */
 .about { row-gap: 20px; align-items: start; }
 .about .ph { aspect-ratio: 3 / 4; max-width: 340px; order: 5; }
-.about p { color: var(--soft); font-size: .96rem; }
+.about p { color: var(--soft); font-size: .98rem; }
 .about .btn { justify-self: start; margin-top: 8px; }
-.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px var(--gap); margin-top: clamp(56px, 8vw, 104px); border-top: 1px solid var(--line); padding-top: 36px; align-items: start; }
-.stat b { display: block; font-family: var(--font-display); font-weight: 300; font-size: clamp(3rem, 6vw, 5.2rem); line-height: 1; font-variant-numeric: tabular-nums lining-nums; }
-.stat b i { font-size: .42em; font-weight: 300; margin-left: .15em; color: var(--accent-ink); }
-.stat > span { display: block; margin-top: 12px; font-size: .88rem; color: var(--soft); max-width: 22ch; }
 
-/* Простір */
+/* Простір: заголовок завжди над фото, нічого не накладається */
 .space { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap); align-items: start; }
 .space figure { margin: 0; display: grid; gap: 12px; }
 .space .ph { aspect-ratio: 3 / 4; }
@@ -162,7 +201,7 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--accent-ink); }
 
 /* Послуги */
 .svc { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.svc li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding-block: 24px; border-bottom: 1px solid var(--line); align-items: baseline; }
+.svc li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding-block: 24px; border-bottom: 1px solid var(--line); align-items: start; justify-items: start; }
 .svc h3 { font-size: clamp(1.7rem, 3vw, 2.4rem); font-style: italic; font-weight: 300; line-height: 1.05; }
 .svc p { color: var(--soft); font-size: .96rem; }
 .svc .dur { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-ink); white-space: nowrap; font-weight: 500; }
@@ -197,7 +236,7 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--accent-ink); }
 .ba-handle::after { content: "↔"; position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: var(--card); color: var(--ink); display: grid; place-items: center; font-size: 1rem; box-shadow: 0 2px 10px rgba(44, 38, 32, .18); }
 .result h3 { font-size: 1.6rem; line-height: 1.1; }
 .result p { color: var(--soft); font-size: .92rem; margin-top: -8px; }
-.note { margin-top: 32px; font-size: .84rem; color: var(--soft); }
+.note { margin-top: 28px; font-size: .84rem; color: var(--soft); }
 
 /* Історії */
 .stories { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px var(--gap); align-items: start; }
@@ -210,14 +249,14 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--accent-ink); }
 
 /* Відгуки */
 .reviews { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px var(--gap); align-items: start; }
-.review { margin: 0; border-top: 1px solid var(--ink); padding-top: 22px; display: grid; gap: 22px; align-content: start; }
+.review { margin: 0; border-top: 1px solid var(--ink); padding-top: 22px; display: grid; gap: 18px; align-content: start; }
 .stars { color: var(--accent-ink); letter-spacing: .2em; font-size: .9rem; }
-.review blockquote { margin: 0; font-family: var(--font-display); font-size: 1.5rem; line-height: 1.28; font-weight: 400; }
+.review blockquote { margin: 0; font-family: var(--font-display); font-size: 1.4rem; line-height: 1.28; font-weight: 400; }
 .review figcaption { font-size: .84rem; color: var(--soft); }
 .review figcaption b { display: block; color: var(--ink); font-weight: 500; letter-spacing: .04em; }
 
 /* Запис */
-.book { row-gap: 40px; align-items: start; }
+.book { row-gap: 36px; align-items: start; }
 .contacts { display: grid; gap: 18px; margin: 0; font-size: .96rem; }
 .contacts dt { font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); font-weight: 500; }
 .contacts dd { margin: 2px 0 0; }
@@ -233,6 +272,18 @@ form { display: grid; gap: 18px; }
   padding: 14px 16px;
   font: 400 1rem/1.4 var(--font-body);
 }
+.field select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 46px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%232c2620' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 12px 8px;
+}
+.field select.flash { border-color: var(--accent-ink); box-shadow: 0 0 0 3px rgba(176, 139, 98, .3); }
 .field textarea { min-height: 96px; resize: vertical; }
 .field input::placeholder, .field textarea::placeholder { color: #968b7d; }
 .field input[aria-invalid="true"] { border-color: #b4553a; }
@@ -242,11 +293,18 @@ form { display: grid; gap: 18px; }
 .status { font-size: .92rem; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
 
 /* Підвал */
-.foot { border-top: 1px solid var(--line); background: var(--bg); }
-.foot .row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px 40px; padding-block: 32px; font-size: .84rem; color: var(--soft); }
-.foot nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.foot { background: var(--bg-2); border-top: 1px solid var(--line); padding-top: clamp(40px, 5vw, 64px); }
+.foot-main { row-gap: 32px; align-items: start; padding-bottom: clamp(32px, 4vw, 48px); }
+.foot-brand { display: grid; gap: 14px; justify-items: start; }
+.foot-brand p { color: var(--soft); font-size: .92rem; max-width: 30ch; }
+.foot .label { margin-bottom: 14px; }
+.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .94rem; }
 .foot a { text-decoration: none; }
-.foot a:hover { color: var(--ink); }
+.foot a:hover { color: var(--accent-ink); }
+.foot-contact { display: grid; gap: 8px; font-size: .94rem; align-content: start; }
+.foot-cta { display: grid; gap: 14px; justify-items: start; align-content: start; }
+.foot-cta p:not(.label) { color: var(--soft); font-size: .94rem; max-width: 26ch; }
+.foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 20px; border-top: 1px solid var(--line); font-size: .82rem; color: var(--soft); }
 
 /* Лінії сітки: натисніть G, щоб показати або сховати */
 .guides { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
@@ -258,11 +316,11 @@ form { display: grid; gap: 18px; }
 .pop-ready .pop { opacity: 0; transform: translateY(14px) scale(.96); }
 .pop-ready .pop.in { opacity: 1; transform: none; transition: opacity .2s ease-out var(--d, 0ms), transform .2s cubic-bezier(.2, 1.4, .4, 1) var(--d, 0ms); }
 
-/* Планшет */
+/* Планшет і вище */
 @media (min-width: 641px) {
   .princ { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .reviews { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .reviews { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .row2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .space { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .space figure:nth-child(3) { grid-column: auto; }
@@ -270,10 +328,12 @@ form { display: grid; gap: 18px; }
   .story { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .story .ph { grid-column: span 2; aspect-ratio: 3 / 4; }
   .story > div { grid-column: span 4; }
+  .foot-main { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .masters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stories { grid-template-columns: minmax(0, 1fr); }
 }
-
-/* Комп'ютер: усе стає на 12 колонок */
 @media (min-width: 821px) {
+  .util { display: block; }
   .g12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
 
   .shead { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
@@ -282,49 +342,54 @@ form { display: grid; gap: 18px; }
   .shead h2 { grid-column: 4 / -1; grid-row: 2; }
   .shead .lead, .shead .rating { grid-column: 4 / span 5; grid-row: 3; margin-top: 4px; }
 
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
   .about .ph { grid-column: 1 / span 3; grid-row: 1 / span 2; order: 0; max-width: none; }
   .about .p1 { grid-column: 4 / span 3; grid-row: 1; }
   .about .p2 { grid-column: 7 / span 3; grid-row: 1; }
   .about .btn { grid-column: 4 / span 3; grid-row: 2; align-self: start; }
-  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
-  .svc li { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); padding-block: 28px; }
-  .svc h3 { grid-column: 4 / span 3; }
-  .svc p { grid-column: 7 / span 4; }
-  .svc .dur { grid-column: 11 / -1; }
+  .svc li { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); row-gap: 6px; padding-block: 28px; align-items: start; }
+  .svc h3 { grid-column: 4 / span 3; grid-row: 1 / span 2; }
+  .svc p { grid-column: 7 / span 3; grid-row: 1; }
+  .svc .dur { grid-column: 7 / span 3; grid-row: 2; }
+  .svc .btn { grid-column: 11 / -1; grid-row: 1 / span 2; align-self: center; justify-self: start; }
 
   .princ { grid-column: 4 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px var(--gap); }
   .masters { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .results { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .stories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .reviews { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
   .book .contacts { grid-column: 4 / span 3; grid-row: 1; }
   .book form { grid-column: 7 / -1; grid-row: 1; }
 
-  .foot .row { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
-  .foot .logo { grid-column: 1 / span 3; }
-  .foot nav { grid-column: 4 / span 6; }
-  .foot .copy { grid-column: 10 / -1; }
-}
-@media (min-width: 1041px) {
-  .top .row { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
-  .top .logo { grid-column: 1 / span 3; }
-  .top .nav { display: flex; grid-column: 4 / span 7; }
-  .top .btn { grid-column: 11 / -1; justify-self: end; }
+  .foot-main { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .foot-brand { grid-column: 1 / span 3; }
+  .foot-nav { grid-column: 4 / span 3; }
+  .foot-contact { grid-column: 7 / span 3; }
+  .foot-cta { grid-column: 10 / -1; }
 }
 @media (min-width: 821px) and (max-width: 1040px) {
   .masters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stories { grid-template-columns: minmax(0, 1fr); }
   .results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (min-width: 641px) and (max-width: 820px) {
-  .masters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stories { grid-template-columns: minmax(0, 1fr); }
-  .reviews { grid-template-columns: minmax(0, 1fr); }
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .reviews { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 821px) {
   .hero::after { background: linear-gradient(90deg, rgba(243,237,227,.95) 0%, rgba(243,237,227,.8) 36%, rgba(243,237,227,0) 74%); }
+}
+@media (min-width: 1180px) {
+  .menu-btn { display: none; }
+  .top .row { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
+  .top .logo { grid-column: 1 / span 3; }
+  .top .nav { display: flex; position: static; flex-direction: row; gap: 26px; grid-column: 4 / span 7; padding: 0; border: 0; background: none; font-size: .76rem; }
+  .top .nav a { padding: 0; border: 0; }
+  .top .actions { grid-column: 11 / -1; justify-self: end; }
+}
+@media (max-width: 640px) {
+  .top .btn { padding: 11px 16px; font-size: .72rem; }
+  .logo { font-size: 1.55rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -332,11 +397,22 @@ form { display: grid; gap: 18px; }
 }
 </style>
 
-<header class="top">
+<div class="util">
+  <div class="wrap">
+    <div class="row">
+      <span>Пн–Сб 10:00–20:00</span>
+      <span>вул. Прикладна, 12, Київ</span>
+      <a href="tel:+380440000000">+380 44 000 00 00</a>
+      <span>@beautytime.studio</span>
+    </div>
+  </div>
+</div>
+
+<header class="top" id="site-top">
   <div class="wrap">
     <div class="row">
       <a class="logo" href="#top">Beauty <em>Time</em></a>
-      <nav class="nav" aria-label="Розділи сторінки">
+      <nav class="nav" id="site-nav" aria-label="Розділи сторінки">
         <a href="#about">Про салон</a>
         <a href="#services">Послуги</a>
         <a href="#masters">Майстри</a>
@@ -344,7 +420,10 @@ form { display: grid; gap: 18px; }
         <a href="#reviews">Відгуки</a>
         <a href="#booking">Контакти</a>
       </nav>
-      <a class="btn" href="#booking">Записатись</a>
+      <div class="actions">
+        <a class="btn" href="#booking">Записатись</a>
+        <button class="menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="site-nav">Меню</button>
+      </div>
     </div>
   </div>
 </header>
@@ -367,6 +446,12 @@ form { display: grid; gap: 18px; }
           <span>вул. Прикладна, 12</span>
         </div>
       </div>
+      <div class="stats" aria-label="Салон у цифрах">
+        <div class="stat"><b><span class="num" data-to="9">9</span><i>років</i></b><span>працюємо в Києві</span></div>
+        <div class="stat"><b><span class="num" data-to="12">12</span></b><span>сертифікованих майстрів</span></div>
+        <div class="stat"><b><span class="num" data-to="6000">6000</span><i>+</i></b><span>візитів щороку</span></div>
+        <div class="stat"><b><span class="num" data-to="4.9" data-dec="1">4,9</span></b><span>середня оцінка у відгуках</span></div>
+      </div>
     </div>
   </section>
 
@@ -383,22 +468,15 @@ form { display: grid; gap: 18px; }
         <a class="btn ghost" href="#services">Обрати послугу</a>
         <div class="ph arch"><img src="salon.jpg" alt="Зал салону: підсвічені овальні дзеркала та крісла майстрів у теплому світлі" width="900" height="1600"></div>
       </div>
-
-      <div class="stats" aria-label="Салон у цифрах">
-        <div class="stat"><b><span class="num" data-to="9">9</span><i>років</i></b><span>працюємо в Києві</span></div>
-        <div class="stat"><b><span class="num" data-to="12">12</span></b><span>сертифікованих майстрів</span></div>
-        <div class="stat"><b><span class="num" data-to="6000">6000</span><i>+</i></b><span>візитів щороку</span></div>
-        <div class="stat"><b><span class="num" data-to="4.9" data-dec="1">4,9</span></b><span>середня оцінка у відгуках</span></div>
-      </div>
     </div>
   </section>
 
-  <section class="sec tone" aria-labelledby="space-h">
+  <section class="sec" aria-labelledby="space-h">
     <div class="wrap">
       <div class="shead g12">
         <span class="idx">02</span>
         <p class="label">Простір</p>
-        <h2 id="space-h">Місце, де можна <em>видихнути</em></h2>
+        <h2 id="space-h">Простір для <em>спокою</em></h2>
         <p class="lead">Теплі матеріали, м'яке світло і окремі кабінети. Ми зробили салон таким, щоб у ньому хотілося залишитись довше.</p>
       </div>
       <div class="space">
@@ -418,17 +496,17 @@ form { display: grid; gap: 18px; }
         <p class="lead">Точну процедуру й тривалість майстер підбере на консультації.</p>
       </div>
       <ul class="svc">
-        <li><h3>Догляд за обличчям</h3><p>Чистка, пілінги, зволоження й відновлення. Програму складаємо за станом вашої шкіри.</p><span class="dur">від 60 хв</span></li>
-        <li><h3>Апаратна косметологія</h3><p>Апаратні методики для тонусу, сяйва й ліфтингу без тривалої реабілітації.</p><span class="dur">від 45 хв</span></li>
-        <li><h3>Манікюр і педикюр</h3><p>Класичний і апаратний, покриття гель-лаком, догляд за кутикулою й стопами.</p><span class="dur">від 90 хв</span></li>
-        <li><h3>Брови та вії</h3><p>Корекція, фарбування, ламінування брів і вій, нарощування вій.</p><span class="dur">від 60 хв</span></li>
-        <li><h3>Масаж</h3><p>Розслаблювальний масаж тіла, обличчя й шиї для зняття напруги.</p><span class="dur">від 50 хв</span></li>
-        <li><h3>Макіяж</h3><p>Денний, вечірній і для фотосесії. Підкреслюємо ваші риси без важкого шару.</p><span class="dur">від 60 хв</span></li>
+        <li><h3>Догляд за обличчям</h3><p>Чистка, пілінги, зволоження й відновлення. Програму складаємо за станом вашої шкіри.</p><span class="dur">від 60 хв</span><a class="btn ghost sm" href="#booking" data-service="Догляд за обличчям">Детальніше</a></li>
+        <li><h3>Апаратна косметологія</h3><p>Апаратні методики для тонусу, сяйва й ліфтингу без тривалої реабілітації.</p><span class="dur">від 45 хв</span><a class="btn ghost sm" href="#booking" data-service="Апаратна косметологія">Детальніше</a></li>
+        <li><h3>Манікюр і педикюр</h3><p>Класичний і апаратний, покриття гель-лаком, догляд за кутикулою й стопами.</p><span class="dur">від 90 хв</span><a class="btn ghost sm" href="#booking" data-service="Манікюр і педикюр">Детальніше</a></li>
+        <li><h3>Брови та вії</h3><p>Корекція, фарбування, ламінування брів і вій, нарощування вій.</p><span class="dur">від 60 хв</span><a class="btn ghost sm" href="#booking" data-service="Брови та вії">Детальніше</a></li>
+        <li><h3>Масаж</h3><p>Розслаблювальний масаж тіла, обличчя й шиї для зняття напруги.</p><span class="dur">від 50 хв</span><a class="btn ghost sm" href="#booking" data-service="Масаж">Детальніше</a></li>
+        <li><h3>Макіяж</h3><p>Денний, вечірній і для фотосесії. Підкреслюємо ваші риси без важкого шару.</p><span class="dur">від 60 хв</span><a class="btn ghost sm" href="#booking" data-service="Макіяж">Детальніше</a></li>
       </ul>
     </div>
   </section>
 
-  <section class="sec tone" id="approach" aria-labelledby="approach-h">
+  <section class="sec" id="approach" aria-labelledby="approach-h">
     <div class="wrap">
       <div class="shead g12">
         <span class="idx">04</span>
@@ -561,7 +639,7 @@ form { display: grid; gap: 18px; }
     </div>
   </section>
 
-  <section class="sec tone" id="reviews" aria-labelledby="reviews-h">
+  <section class="sec" id="reviews" aria-labelledby="reviews-h">
     <div class="wrap">
       <div class="shead g12">
         <span class="idx">08</span>
@@ -585,11 +663,36 @@ form { display: grid; gap: 18px; }
           <blockquote>Ламінування брів вийшло дуже природним. Прийшла на годину і вийшла з відчуттям, що відпочила.</blockquote>
           <figcaption><b>Ірина Д.</b>Брови та вії</figcaption>
         </figure>
+        <figure class="review">
+          <div class="stars" aria-label="5 з 5">★★★★★</div>
+          <blockquote>Прийшла після важкого тижня з затисненою шиєю. Андрій підібрав тиск саме так, як потрібно, і я вийшла майже без болю.</blockquote>
+          <figcaption><b>Наталія П.</b>Масаж</figcaption>
+        </figure>
+        <figure class="review">
+          <div class="stars" aria-label="5 з 5">★★★★★</div>
+          <blockquote>Макіяж на фотосесію тримався весь день і виглядав природно. Майстриня розпитала про образ і нічого не нав'язувала.</blockquote>
+          <figcaption><b>Вікторія С.</b>Макіяж</figcaption>
+        </figure>
+        <figure class="review">
+          <div class="stars" aria-label="5 з 5">★★★★★</div>
+          <blockquote>Боялась апаратних процедур, але мені все показали й пояснили. Шкіра стала рівнішою вже після другого візиту.</blockquote>
+          <figcaption><b>Юлія Р.</b>Апаратна косметологія</figcaption>
+        </figure>
+        <figure class="review">
+          <div class="stars" aria-label="5 з 5">★★★★★</div>
+          <blockquote>Вії лягли акуратно, нічого не тягне й не заважає. Вже записалась на корекцію через місяць.</blockquote>
+          <figcaption><b>Анастасія Л.</b>Брови та вії</figcaption>
+        </figure>
+        <figure class="review">
+          <div class="stars" aria-label="5 з 5">★★★★★</div>
+          <blockquote>Дуже чисто, і це видно: інструменти розпаковують при мені. Тепер ходжу на педикюр лише сюди.</blockquote>
+          <figcaption><b>Оксана Г.</b>Манікюр і педикюр</figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
-  <section class="sec" id="booking" aria-labelledby="book-h">
+  <section class="sec tone end" id="booking" aria-labelledby="book-h">
     <div class="wrap">
       <div class="shead g12">
         <span class="idx">09</span>
@@ -663,17 +766,38 @@ form { display: grid; gap: 18px; }
 
 <footer class="foot">
   <div class="wrap">
-    <div class="row">
-      <a class="logo" href="#top">Beauty <em>Time</em></a>
-      <nav aria-label="Нижнє меню">
-        <a href="#about">Про салон</a>
-        <a href="#services">Послуги</a>
-        <a href="#masters">Майстри</a>
-        <a href="#results">Результати</a>
-        <a href="#reviews">Відгуки</a>
-        <a href="#booking">Запис</a>
+    <div class="foot-main g12">
+      <div class="foot-brand">
+        <a class="logo" href="#top">Beauty <em>Time</em></a>
+        <p>Салон краси в Києві. Один майстер, одна година, повна увага до вас.</p>
+      </div>
+      <nav class="foot-nav" aria-label="Нижнє меню">
+        <p class="label">Навігація</p>
+        <ul>
+          <li><a href="#about">Про салон</a></li>
+          <li><a href="#services">Послуги</a></li>
+          <li><a href="#masters">Майстри</a></li>
+          <li><a href="#results">Результати</a></li>
+          <li><a href="#reviews">Відгуки</a></li>
+          <li><a href="#booking">Запис</a></li>
+        </ul>
       </nav>
-      <span class="copy">© 2026 Beauty Time. Демонстраційний проєкт.</span>
+      <div class="foot-contact">
+        <p class="label">Контакти</p>
+        <span>м. Київ, вул. Прикладна, 12</span>
+        <span>+380 44 000 00 00</span>
+        <span>Пн–Сб 10:00–20:00</span>
+        <span>@beautytime.studio</span>
+      </div>
+      <div class="foot-cta">
+        <p class="label">Запис</p>
+        <p>Оберіть послугу й зручний час, адміністратор підтвердить візит.</p>
+        <a class="btn" href="#booking">Записатись</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Beauty Time. Демонстраційний проєкт.</span>
+      <a href="#top">Нагору ↑</a>
     </div>
   </div>
 </footer>
@@ -684,12 +808,26 @@ form { display: grid; gap: 18px; }
 
 <script>
 (function () {
+  /* Меню на планшеті й телефоні */
+  var top = document.getElementById("site-top");
+  var btn = document.getElementById("menu-btn");
+  function setMenu(open) {
+    top.classList.toggle("open", open);
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  btn.addEventListener("click", function () { setMenu(!top.classList.contains("open")); });
+  Array.prototype.forEach.call(document.querySelectorAll("#site-nav a"), function (a) {
+    a.addEventListener("click", function () { setMenu(false); });
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
+
   /* Форма запису */
   var form = document.getElementById("booking-form");
   var status = document.getElementById("form-status");
   var name = document.getElementById("f-name");
   var phone = document.getElementById("f-phone");
   var date = document.getElementById("f-date");
+  var service = document.getElementById("f-service");
 
   try {
     var d = new Date();
@@ -712,6 +850,16 @@ form { display: grid; gap: 18px; }
     status.textContent = "Дякуємо, " + name.value.trim() + "! Заявка записана. Це демонстраційна форма: дані нікуди не надсилаються.";
     status.hidden = false;
     form.reset();
+  });
+
+  /* Кнопка «Детальніше» біля послуги: веде до форми й одразу обирає цю послугу */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-service]"), function (a) {
+    a.addEventListener("click", function () {
+      var want = a.getAttribute("data-service");
+      Array.prototype.forEach.call(service.options, function (o, i) { if (o.text === want) service.selectedIndex = i; });
+      service.classList.add("flash");
+      setTimeout(function () { service.classList.remove("flash"); }, 1800);
+    });
   });
 
   /* Порівняння до і після */
@@ -761,7 +909,7 @@ form { display: grid; gap: 18px; }
   }, { threshold: 0.15, rootMargin: "0px 0px -6% 0px" });
   Array.prototype.forEach.call(cards, function (el) { cardIO.observe(el); });
 
-  /* Цифри в блоці «Про салон»: відлік від 0 до потрібного значення */
+  /* Цифри на плашках: відлік від 0 до потрібного значення */
   var nums = document.querySelectorAll(".num");
   var stats = document.querySelector(".stats");
   function fmt(val, dec) { return dec ? val.toFixed(dec).replace(".", ",") : String(Math.round(val)); }
