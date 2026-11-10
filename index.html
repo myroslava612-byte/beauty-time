@@ -125,10 +125,9 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--accent-ink); }
 .label { font-size: .74rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-ink); font-weight: 500; margin: 0; }
 
 .shead { margin-bottom: clamp(32px, 4.5vw, 56px); row-gap: 18px; align-items: baseline; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; }
-.shead .idx { font-size: .74rem; letter-spacing: .14em; color: var(--soft); font-variant-numeric: tabular-nums; font-weight: 500; }
 .shead .label::before { content: "[ "; }
 .shead .label::after { content: " ]"; }
-.shead h2, .shead .lead, .shead .rating { grid-column: 1 / -1; }
+.shead .label, .shead h2, .shead .lead, .shead .rating { grid-column: 1 / -1; }
 .shead .lead { color: var(--soft); max-width: 46ch; }
 .rating { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .rating b { font-family: var(--font-display); font-weight: 300; font-size: 3.4rem; line-height: 1; }
@@ -459,7 +458,6 @@ form { display: grid; gap: 18px; }
   .g12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
 
   .shead { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
-  .shead .idx { grid-column: 1 / span 3; grid-row: 1; }
   .shead .label { grid-column: 4 / -1; grid-row: 1; }
   .shead h2 { grid-column: 4 / -1; grid-row: 2; }
   .shead .lead, .shead .rating { grid-column: 4 / span 5; grid-row: 3; margin-top: 4px; }
@@ -580,7 +578,6 @@ form { display: grid; gap: 18px; }
   <section class="sec" id="about" aria-labelledby="about-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">01</span>
         <p class="label">Про салон</p>
         <h2 id="about-h">Спокійний <em>догляд.</em> Уважні руки. Видимий результат.</h2>
       </div>
@@ -596,7 +593,6 @@ form { display: grid; gap: 18px; }
   <section class="sec" aria-labelledby="space-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">02</span>
         <p class="label">Простір</p>
         <h2 id="space-h">Простір для <em>спокою</em></h2>
         <p class="lead">Теплі матеріали, м'яке світло і окремі кабінети. Ми зробили салон таким, щоб у ньому хотілося залишитись довше.</p>
@@ -612,7 +608,6 @@ form { display: grid; gap: 18px; }
   <section class="sec" id="services" aria-labelledby="services-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">03</span>
         <p class="label">Послуги</p>
         <h2 id="services-h">Шість напрямків <em>догляду</em></h2>
         <p class="lead">Точну процедуру й тривалість майстер підбере на консультації.</p>
@@ -631,7 +626,6 @@ form { display: grid; gap: 18px; }
   <section class="sec" id="approach" aria-labelledby="approach-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">04</span>
         <p class="label">Як ми працюємо</p>
         <h2 id="approach-h">Шість правил <em>для кожного візиту</em></h2>
         <p class="lead">Ви повинні йти від нас спокійнішою, ніж прийшли, і з результатом, який виглядає природно.</p>
@@ -652,7 +646,6 @@ form { display: grid; gap: 18px; }
   <section class="sec" id="masters" aria-labelledby="masters-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">05</span>
         <p class="label">Наші майстри</p>
         <h2 id="masters-h">Люди, яким ви <em>довіряєте</em></h2>
         <p class="lead">Кожен майстер має сертифікати й щороку навчається. Ви завжди знаєте, хто саме працюватиме з вами.</p>
@@ -689,7 +682,6 @@ form { display: grid; gap: 18px; }
   <section class="sec tone" id="results" aria-labelledby="results-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">06</span>
         <p class="label">Результати</p>
         <h2 id="results-h">Реальні роботи <em>до і після</em></h2>
         <p class="lead">Потягніть повзунок по фото, щоб порівняти. Без фільтрів і ретуші.</p>
@@ -733,7 +725,6 @@ form { display: grid; gap: 18px; }
   <section class="sec" id="stories" aria-labelledby="stories-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">07</span>
         <p class="label">Історії клієнток</p>
         <h2 id="stories-h">З чим вони <em>приходили</em></h2>
         <p class="lead">Дві історії про те, як ми підбираємо догляд під конкретну людину й задачу.</p>
@@ -764,7 +755,6 @@ form { display: grid; gap: 18px; }
   <section class="sec" id="reviews" aria-labelledby="reviews-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">08</span>
         <p class="label">Відгуки</p>
         <h2 id="reviews-h">Що кажуть <em>про нас</em></h2>
         <div class="rating"><b>4,9</b><span>з 5, за відгуками клієнток</span></div>
@@ -830,7 +820,6 @@ form { display: grid; gap: 18px; }
   <section class="sec tone end" id="booking" aria-labelledby="book-h">
     <div class="wrap">
       <div class="shead g12">
-        <span class="idx">09</span>
         <p class="label">Запис на візит</p>
         <h2 id="book-h">Оберіть <em>час</em> для себе</h2>
         <p class="lead">Залиште контакти, і адміністратор зателефонує протягом робочого дня, щоб підтвердити зручний час.</p>
